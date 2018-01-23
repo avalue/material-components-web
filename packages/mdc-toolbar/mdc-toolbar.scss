@@ -23,24 +23,23 @@
 
 // postcss-bem-linter: define toolbar
 .mdc-toolbar {
+  @include mdc-toolbar-fill-color-accessible(primary);
+
   display: flex;
   position: relative;
   flex-direction: column;
   justify-content: space-between;
-  width: 100%;
   box-sizing: border-box;
-
-  @include mdc-theme-prop(background-color, primary);
-  @include mdc-theme-prop(color, text-primary-on-primary);
+  width: 100%;
 
   &__row {
     display: flex;
     position: relative;
     align-items: center;
+    box-sizing: border-box;
     width: 100%;
     height: auto;
     min-height: $mdc-toolbar-row-height;
-    box-sizing: border-box;
 
     // TODO: refactor this out when #23 is implemented
     @media (max-width: $mdc-toolbar-mobile-landscape-width-breakpoint)
@@ -77,67 +76,74 @@
   &__title {
     @include mdc-typography(title);
     @include mdc-typography-overflow-ellipsis;
+    @include mdc-rtl-reflexive-box(margin, left, $mdc-toolbar-element-horizontal-padding-desktop);
 
     align-self: center;
-    margin: 0;
-    margin-left: 24px;
-    padding: $mdc-toobar-element-vertical-padding 0;
+    padding: $mdc-toolbar-element-vertical-padding 0;
     line-height: 1.5rem;
     z-index: 1;
   }
 
   &__icon {
-    @include mdc-shared-icon-style;
-    @include mdc-theme-prop(color, text-primary-on-primary);
+    @include mdc-toolbar-icon_;
 
-    cursor: pointer;
+    padding-right: $mdc-toolbar-element-horizontal-padding-desktop / 2;
+    padding-left: $mdc-toolbar-element-horizontal-padding-desktop / 2;
   }
 
-  &__icon:last-child {
-    padding-right: 16px;
+  &__icon:last-of-type {
+    @include mdc-rtl-reflexive-property(padding, $mdc-toolbar-element-horizontal-padding-desktop / 2, $mdc-toolbar-element-horizontal-padding-desktop);
   }
 
-  &__icon--menu {
-    @include mdc-shared-icon-style(menu);
-    @include mdc-theme-prop(color, text-primary-on-primary);
+  &__menu-icon {
+    @include mdc-toolbar-icon_;
 
-    padding: 16px 24px;
-    cursor: pointer;
+    padding-right: $mdc-toolbar-element-horizontal-padding-desktop;
+    padding-left: $mdc-toolbar-element-horizontal-padding-desktop;
   }
 }
 
-.mdc-toolbar__icon--menu + .mdc-toolbar__title {
-  margin-left: 8px;
+.mdc-toolbar__menu-icon + .mdc-toolbar__title {
+  @include mdc-rtl-reflexive-box(margin, left, $mdc-toolbar-title-margin-to-menu-icon-desktop);
 }
 
 @media (max-width: $mdc-toolbar-mobile-breakpoint) {
-  .mdc-toolbar__icon--menu {
-    padding: 16px;
-  }
-
-  .mdc-toolbar__icon:last-child {
-    padding: 16px 8px;
-  }
-
   .mdc-toolbar__title {
-    margin-left: 16px !important;
+    @include mdc-rtl-reflexive-box(margin, left, $mdc-toolbar-element-horizontal-padding-mobile);
+  }
+
+  .mdc-toolbar__icon {
+    padding-right: $mdc-toolbar-element-horizontal-padding-mobile / 2;
+    padding-left: $mdc-toolbar-element-horizontal-padding-mobile / 2;
+  }
+
+  .mdc-toolbar__icon:last-of-type {
+    @include mdc-rtl-reflexive-property(padding, $mdc-toolbar-element-horizontal-padding-mobile / 2, $mdc-toolbar-element-horizontal-padding-mobile);
+  }
+
+  .mdc-toolbar__menu-icon {
+    padding-right: $mdc-toolbar-element-horizontal-padding-mobile;
+    padding-left: $mdc-toolbar-element-horizontal-padding-mobile;
+  }
+
+  .mdc-toolbar__menu-icon + .mdc-toolbar__title {
+    @include mdc-rtl-reflexive-box(margin, left, $mdc-toolbar-title-margin-to-menu-icon-mobile);
   }
 }
 
 .mdc-toolbar--fixed {
+  @include mdc-elevation(4);
+
   position: fixed;
   top: 0;
   left: 0;
   z-index: 4;
-
-  @include mdc-elevation(4);
 }
 
 .mdc-toolbar--flexible {
-  // stylelint-disable plugin/selector-bem-pattern
   // bem linter is disabled because it cannot correctly reconcile mdc prefix for css variables.
-  --mdc-toolbar-ratio-to-extend-flexible: $mdc-toolbar-ratio-to-extend-flexible;
-  // stylelint-enable plugin/selector-bem-pattern
+  // stylelint-disable-next-line plugin/selector-bem-pattern
+  --mdc-toolbar-ratio-to-extend-flexible: #{$mdc-toolbar-ratio-to-extend-flexible};
 
   .mdc-toolbar__row:first-child {
     height: $mdc-toolbar-row-height * $mdc-toolbar-ratio-to-extend-flexible;
@@ -185,13 +191,14 @@
       }
     }
   }
-  // stylelint-enable plugin/selector-bem-pattern
 }
 
 .mdc-toolbar--waterfall {
   &.mdc-toolbar--fixed {
     @include mdc-elevation(0);
-    @include mdc-elevation-transition;
+
+    transition: mdc-elevation-transition-value();
+    will-change: $mdc-elevation-property;
 
     &.mdc-toolbar--flexible-space-minimized {
       @include mdc-elevation(4);
@@ -209,12 +216,13 @@
   }
 }
 // postcss-bem-linter: end
+// stylelint-enable plugin/selector-bem-pattern
 
 .mdc-toolbar-fixed-adjust {
   margin-top: $mdc-toolbar-row-height;
 
   @media (max-width: $mdc-toolbar-mobile-landscape-width-breakpoint)
-    and (orientation: landscape) {
+    and (max-height: $mdc-toolbar-mobile-breakpoint) {
     margin-top: $mdc-toolbar-mobile-landscape-row-height;
   }
 

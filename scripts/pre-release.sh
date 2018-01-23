@@ -28,7 +28,7 @@ log "Checking that you can publish to npm..."
 NPM_USER=$(npm whoami)
 if ! npm team ls material:developers | grep -q $NPM_USER; then
   echo "FAILURE: You are not (yet?) part of the material:developers org. Please get in touch" \
-       "with the MDC-Web core team to rectify this"
+       "with the MDC Web core team to rectify this"
   exit 1
 fi
 
@@ -39,9 +39,9 @@ if ! ssh -T git@github.com 2>&1 | grep -q "You've successfully authenticated"; t
   exit 1
 fi
 
-log "Checking that you can deploy the MDC-Web demo site..."
+log "Checking that you can deploy the MDC Web demo site..."
 if ! gcloud config get-value project 2>/dev/null | grep -q material-components-web; then
-  echo "FAILURE: Your gcloud project is not configured for mdc-web. Please run gcloud config set" \
+  echo "FAILURE: Your gcloud project is not configured for MDC Web. Please run gcloud config set" \
        "project material-components-web and ensure it exits successfully"
   exit 1
 fi
@@ -61,12 +61,6 @@ log "Moving built assets to package directories..."
 node scripts/cp-pkgs.js
 echo ""
 
-log "Determining package versions..."
-node scripts/determine-pkg-versions.js
-echo ""
-
-log "Pre-release steps done! You should now run " \
-    "\$(npm bin)/lerna publish -m \"chore: Publish\", followed by ./scripts/post-release.sh"
-log "Please use the package versions specified above to increment the different package versions " \
-    "When prompted by lerna. Or, override those versions if need be."
+log "Pre-release steps done! Next, you should run:" \
+    "\$(npm bin)/lerna publish --skip-git"
 echo ""

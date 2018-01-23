@@ -5,26 +5,26 @@ section: docs
 path: /docs/closure-compiler/
 -->
 
-# Annotating MDC-Web for the Closure Compiler
+# Annotating MDC Web for the Closure Compiler
 
 > TL;DR read the section on our [type system](#mdc-web-type-system) and our [closure compiler conventions](#mdc-web-closure-conventions).
 
 ## Who this document is for
 
-This document is for _core contributors to MDC-Web, as well as contributors who wish to author
+This document is for _core contributors to MDC Web, as well as contributors who wish to author
 new components, or make non-trivial changes to existing components._ It assumes you're familiar with
 our codebase, and have read through most of our [Authoring Components guide](./authoring-components.md).
 
 ## Why this is needed
 
-MDC-Web - and Material Design in general - was created by Google. Therefore, it is not only a top
-priority that MDC-Web works seamlessly for our external community, but also that _MDC-Web works
+MDC Web - and Material Design in general - was created by Google. Therefore, it is not only a top
+priority that MDC Web works seamlessly for our external community, but also that _MDC Web works
 seamlessly for all Google applications_.
 
 At Google, all Javascript is processed and minified by the
 [Closure Compiler](https://github.com/google/closure-compiler) (which will be referred to as
 **closure**, the **compiler**, or any combination of those terms). Thus, _in order for every Google
-application to deem MDC-Web viable for use within it, the library must be compilable using
+application to deem MDC Web viable for use within it, the library must be compilable using
 closure's [advanced compilation](https://developers.google.com/closure/compiler/docs/api-tutorial3)
 mechanisms_.
 
@@ -68,12 +68,12 @@ accessor properties).
 You can use [this starter template](https://goo.gl/YSQkDi) to help debug your closure code, which
 has all of the above settings pre-configured (Even though the UI shows optimization is simple).
 
-## MDC-Web Type System
+## MDC Web Type System
 
-The following UML-like diagram shows a conceptual overview of the basic type system for MDC-Web. The
+The following UML-like diagram shows a conceptual overview of the basic type system for MDC Web. The
 diagram uses closure-esque type syntax, and represents what's in [mdc-base](../packages/mdc-base).
 
-![MDC-Web Type System UML(-like) diagram](https://docs.google.com/drawings/d/1mJBPiUkdFiXkU5A6kAdpZD5nXr6NkHIIW_vMNVdIvYY/pub?w=960&amp;h=720)
+![MDC Web Type System UML(-like) diagram](https://docs.google.com/drawings/d/1mJBPiUkdFiXkU5A6kAdpZD5nXr6NkHIIW_vMNVdIvYY/pub?w=960&amp;h=720)
 
 > Note that the actual code to express this parameterization will vary slightly from the UML above,
   since closure does not support bounded generics.
@@ -90,13 +90,13 @@ The overall type system is relatively straightforward, and boils down to 3 main 
   `MDCRippleAdapter`. Thus, when declaring the `MDCRipple` class, the proper JSDoc to specify this
   would be included: `@extends MDCComponent<!MDCRippleFoundation>`.
 
-## MDC-Web Closure Conventions
+## MDC Web Closure Conventions
 
-The following guidelines outline the general conventions for writing closurized code for MDC-Web.
+The following guidelines outline the general conventions for writing closurized code for MDC Web.
 This section should contain most - if not all - of what you need to get up and running writing
 closure for our codebase. It also includes an [example component skeleton](#an-example-component-skeleton).
 
-### Making MDC-Web aware of closure components (temporary)
+### Making MDC Web aware of closure components (temporary)
 
 Until our [closure compatibility milestone](https://github.com/material-components/material-components-web/milestone/4) has been reached, please ensure that whenever a
 component is annotated, it's directory name under `packages/` is added to the `"closureWhitelist"`
@@ -116,6 +116,22 @@ import MDCFoundation from '@material/base/foundation';
 
 This is an unfortunate side-effect of how [closure's module naming mechanism works](https://github.com/google/closure-compiler/issues/2257).
 
+#### All `export` statements must be consolidated into one line at the end of the file.
+
+```js
+// BAD
+export function getFoo() {
+...
+export function getBar() {
+// GOOD
+function getFoo() {
+...
+function getBar() {
+...
+export {getFoo, getBar};
+```
+
+
 #### Standard foundation constants must be defined as `@enum` types
 
 - `cssClasses` should be defined as `/** @enum {string} */`
@@ -124,19 +140,21 @@ This is an unfortunate side-effect of how [closure's module naming mechanism wor
 
 ```js
 /** @enum {string} */
-export const cssClasses = {
+const cssClasses = {
   // ...
 };
 
 /** @enum {string} */
-export const strings = {
+const strings = {
   // ...
 };
 
 /** @enum {number} */
-export const numbers = {
+const numbers = {
   // ...
 };
+
+export {cssClasses, strings, numbers};
 ```
 
 #### All adapters must be defined as `@record` types
@@ -151,7 +169,7 @@ inline comments present in the methods within `defaultAdapter`_.
 // adapter.js
 
 /** @record */
-export default class MDCComponentAdapter {
+class MDCComponentAdapter {
   /**
    * Adds a class to the root element.
    * @param {string} className
@@ -164,6 +182,8 @@ export default class MDCComponentAdapter {
    */
   removeClass(className) {}
 }
+
+export default MDCComponentAdapter;
 ```
 
 #### All foundation and component classes must be marked as `@final`
@@ -185,8 +205,11 @@ Foundations must extend `MDCFoundation` parameterized by their respective adapte
 import MDCFoundation from '@material/base/foundation';
 import MDCComponentAdapter from './adapter';
 
-/** @final @extends {MDCFoundation<!MDCComponentAdapter>} */
-export default class MDCComponentFoundation extends MDCFoundation {
+/**
+ * @extends {MDCFoundation<!MDCComponentAdapter>}
+ * @final
+ */
+class MDCComponentFoundation extends MDCFoundation {
   static get defaultAdapter() {
     return {
       addClass: () => {},
@@ -194,6 +217,8 @@ export default class MDCComponentFoundation extends MDCFoundation {
     };
   }
 }
+
+export default MDCComponentFoundation;
 ```
 
 #### Component classes must extend `MDCComponent`
@@ -206,15 +231,21 @@ Components must extend `MDCComponent` parameterized by their respective foundati
 import MDCComponent from '@material/base/component';
 import MDCComponentFoundation from './foundation';
 
-/** @final @extends {MDCComponent<!MDCComponentFoundation>} */
-export class MDCAwesomeComponent extends MDCComponent {
+/**
+ * @extends {MDCComponent<!MDCComponentFoundation>}
+ * @final
+ */
+class MDCAwesomeComponent extends MDCComponent {
+  /** @return {!MDCComponentFoundation} */
   getDefaultFoundation() {
-    return new MDCComponentFoundation({
+    return new MDCComponentFoundation(/** @type {!MDCComponentAdapter} */ ({
       addClass: (className) => this.root_.classList.add(className),
       removeClass: (className) => this.root_.classList.remove(className),
-    });
+    }));
   }
 }
+
+export default MDCAwesomeComponent;
 ```
 
 #### @typedefs are always `let` declarations, always pascal case, and always end in `Type`
@@ -231,7 +262,7 @@ let EventDataType;
 /**
  * @typedef {{foo: string, bar: number}}
  */
-export let EventDataType;
+let EventDataType;
 
 // BAD
 /**
@@ -326,28 +357,30 @@ components for closure.
 ```js
 
 /** @enum {string} */
-export const cssClasses = {
+const cssClasses = {
   FADE_IN: 'mdc-example--fade-in',
   FADE_OUT: 'mdc-example--fade-out',
   IMPORTANT_MSG_FLASH: 'mdc-example__important-msg--flash',
 };
 
 /** @enum {string} */
-export const strings = {
+const strings = {
   IMPORTANT_MSG_SELECTOR: '.mdc-example__important-msg',
 };
 
 /** @enum {number} */
-export const numbers = {
+const numbers = {
   FADE_DURATION_MS: 3000,
 };
+
+export {cssClasses, strings, numbers};
 ```
 
 #### adapter.js
 
 ```js
 /** @record */
-export default class MDCExampleAdapter {
+class MDCExampleAdapter {
   /**
    * Adds a class to the root element.
    * @param {string} className
@@ -363,14 +396,14 @@ export default class MDCExampleAdapter {
   /**
    * Registers an event listener `handler` for event type `type` on the root element.
    * @param {string} type
-   * @param {!Function} handler
+   * @param {function(!Event): undefined} handler
    */
   registerInteractionHandler(type, handler) {}
 
   /**
    * Un-registers an event listener `handler` for event type `type` on the root element.
    * @param {string} type
-   * @param {!Function} handler
+   * @param {function(!Event): undefined} handler
    */
   deregisterInteractionHandler(type, handler) {}
 
@@ -386,6 +419,8 @@ export default class MDCExampleAdapter {
    */
   removeClassFromImportantMsg(className) {}
 }
+
+export default MDCExampleAdapter;
 ```
 
 #### foundation.js
@@ -395,33 +430,36 @@ import MDCFoundation from '@material/base/foundation';
 import MDCExampleAdapter from './adapter';
 import {cssClasses, strings, numbers} from './constants';
 
-/** @final @extends {MDCFoundation<!MDCExampleAdapter>} */
-export default class MDCExampleFoundation extends MDCFoundation {
-  /** @return enum{cssClasses} */
+/**
+ * @extends {MDCFoundation<!MDCExampleAdapter>}
+ * @final
+ */
+class MDCExampleFoundation extends MDCFoundation {
+  /** @return enum {string} */
   static get cssClasses() {
     return cssClasses;
   }
 
-  /** @return enum{strings} */
+  /** @return enum {string} */
   static get strings() {
     return strings;
   }
 
-  /** @return enum{numbers} */
+  /** @return enum {number} */
   static get numbers() {
     return numbers;
   }
 
   /** @return {!MDCExampleAdapter} */
   static get defaultAdapter() {
-    return {
+    return /** @type {!MDCExampleAdapter} */ ({
       addClass: () => {},
       removeClass: () => {},
       registerInteractionHandler: () => {},
       deregisterInteractionHandler: () => {},
       addClassToImportantMsg: () => {},
       removeClassFromImportantMsg: () => {},
-    };
+    });
   }
 
   /**
@@ -478,6 +516,8 @@ export default class MDCExampleFoundation extends MDCFoundation {
     }, FADE_DURATION_MS);
   }
 }
+
+export default MDCExampleFoundation;
 ```
 
 #### index.js
@@ -489,8 +529,11 @@ import {strings} from './constants';
 
 export {MDCExampleFoundation};
 
-/** @final @extends {MDCComponent<!MDCExampleFoundation>} */
-export class MDCExample {
+/**
+ * @extends {MDCComponent<!MDCExampleFoundation>}
+ * @final
+ */
+class MDCExample {
   /**
    * @param {!Element} root
    * @return {!MDCExample}
@@ -518,7 +561,7 @@ export class MDCExample {
    */
   constructor(...args) {
     super(...args);
-    /** @private {!Element} */
+    /** @private {?Element} */
     this.importantMsg_;
   }
 
@@ -546,6 +589,8 @@ export class MDCExample {
     this.active = 'active' in this.root_.dataset;
   }
 }
+
+export MDCExample;
 ```
 
 ## Closure idioms in our codebase
@@ -579,7 +624,8 @@ class MDCComponentAdapter {
 }
 ```
 
-This is the syntax we use for specifying [structural types](https://github.com/google/closure-compiler/wiki/Structural-Interfaces-in-Closure-Compiler) within closure. The class methods, their parameters, and corresponding JSDoc specify the shape of an
+This is the syntax we use for specifying [structural types](https://github.com/google/closure-compiler/wiki/Structural-Interfaces-in-Closure-Compiler) within closure.
+The class methods, their parameters, and corresponding JSDoc specify the shape of an
 object that must contain these methods with their specified parameters and return values. This is
 mostly used to specify the shape of adapters, as mentioned above.
 
@@ -603,7 +649,9 @@ let ActivationStateType;
 /**
  * @typedef {{foo: number}}
  */
-export let MyExportedType;
+let MyExportedType;
+
+export MyExportedType;
 ```
 <!--{% endraw %} -->
 
@@ -625,7 +673,7 @@ const SETTINGS = {
 
 window.settings = SETTINGS;
 
-/** @const {!Object<string, string>} **/
+/** @const {!Object<string, string>} */
 const DEACTIVATION_ACTIVATION_PAIRS = {
   'mouseup': 'mousedown',
   'pointerup': 'pointerdown',
@@ -679,14 +727,17 @@ the constructor via a different function.
 **Example:**
 
 ```js
-/** @final @extends {MDCComponent<!MyComponentFoundation>} */
+/**
+ * @extends {MDCComponent<!MyComponentFoundation>}
+ * @final
+ */
 class MyComponent extends MDCComponent {
   /**
    * @param {...?} args
    */
   constructor(...args) {
     super(...args);
-    /** @private {!Element} */
+    /** @private {?Element} */
     this.innerEl_;  // Sentinel expression statement
   }
 
@@ -701,7 +752,7 @@ closure mandates that `super()` be the first expression within a method.
 
 ```
 constructor(...args) {
-    /** @private {!Element} */
+    /** @private {?Element} */
     this.innerEl_ = DEFAULT_VALUE;
     super(...args);
   }
@@ -721,6 +772,6 @@ be found within that file.
 
 ## Where to go for more help
 
-If you're working on an issue for MDC-Web and find yourself wrestling with closure, please don't
+If you're working on an issue for MDC Web and find yourself wrestling with closure, please don't
 hesitate to [reach out on our discord channel](https://discord.gg/pRKaJB9) and we'll try and help
 you out.

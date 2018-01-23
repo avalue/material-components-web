@@ -117,6 +117,21 @@ test('#init checks if slider is discrete and if display track markers', () => {
   raf.restore();
 });
 
+test('#init sets step to one if slider is discrete but step is zero', () => {
+  const {foundation, mockAdapter} = setupTest();
+  const raf = createMockRaf();
+
+  td.when(mockAdapter.computeBoundingRect()).thenReturn({width: 100, left: 200});
+  td.when(mockAdapter.hasClass(cssClasses.IS_DISCRETE)).thenReturn(true);
+  foundation.init();
+
+  raf.flush();
+
+  assert.equal(foundation.getStep(), 1);
+
+  raf.restore();
+});
+
 test('#init performs an initial layout of the component', () => {
   const {foundation, mockAdapter} = setupTest();
   const raf = createMockRaf();
@@ -482,44 +497,6 @@ test('#setValue flips the slider thumb position across the X-axis when in an RTL
   raf.flush();
 
   td.verify(mockAdapter.setThumbContainerStyleProperty(TRANSFORM_PROP, 'translateX(25px) translateX(-50%)'));
-
-  raf.restore();
-});
-
-test('#setValue adds the mdc-slider--off class when set to the minimum value', () => {
-  const {foundation, mockAdapter} = setupTest();
-  const raf = createMockRaf();
-
-  td.when(mockAdapter.computeBoundingRect()).thenReturn({left: 0, width: 200});
-  foundation.init();
-  raf.flush();
-
-  // Change the value so that setting the value back to zero won't be short-circuited
-  foundation.setValue(10);
-  raf.flush();
-
-  foundation.setValue(0);
-  raf.flush();
-
-  // Called once on init(), once when the value is set
-  td.verify(mockAdapter.addClass(cssClasses.OFF), {times: 2});
-
-  raf.restore();
-});
-
-test('#setValue removes the mdc-slider--off class when not set to the minimum value', () => {
-  const {foundation, mockAdapter} = setupTest();
-  const raf = createMockRaf();
-
-  td.when(mockAdapter.computeBoundingRect()).thenReturn({left: 0, width: 200});
-  foundation.init();
-  raf.flush();
-
-  // Change the value so that setting the value back to zero won't be short-circuited
-  foundation.setValue(10);
-  raf.flush();
-
-  td.verify(mockAdapter.removeClass(cssClasses.OFF));
 
   raf.restore();
 });

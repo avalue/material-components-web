@@ -28,7 +28,7 @@ const path = require('path');
 const {default: traverse} = require('babel-traverse');
 const babylon = require('babylon');
 const camelCase = require('camel-case');
-const cssom = require('CSSOM');
+const cssom = require('cssom');
 const recast = require('recast');
 
 const pkg = require(path.join(process.env.PWD, process.argv[process.argv.length - 1]));
@@ -43,7 +43,7 @@ const MASTER_PKG = require(path.join(process.env.PWD, MASTER_PKG_PATH));
 // These few MDC packages work as foundation or utility packages, and are not
 // directly included in webpack or the material-component-web module. But they
 // are necessary since other MDC packages depend on them.
-const CSS_WHITELIST = ['base', 'auto-init', 'rtl'];
+const CSS_WHITELIST = ['base', 'animation', 'auto-init', 'rtl', 'selection-control'];
 
 main();
 
@@ -70,7 +70,7 @@ function checkPublicConfigForNewComponent() {
 }
 
 function checkNameIsPresentInAllowedScope() {
-  const name = pkg.name.split('/')[1];
+  const name = getPkgName();
   assert.notEqual(REPO_PKG.config['validate-commit-msg']['scope']['allowed'].indexOf(name), -1,
     'FAILURE: Component ' + pkg.name + ' is not added to allowed scope. Please check package.json ' +
     'and add ' + name + ' to config["validate-commit-msg"]["scope"]["allowed"] before commit.');
@@ -98,7 +98,7 @@ function checkJSDependencyAddedInWebpackConfig() {
 }
 
 function checkCSSDependencyAddedInWebpackConfig() {
-  const name = pkg.name.split('/')[1];
+  const name = getPkgName();
   if (CSS_WHITELIST.indexOf(name) === -1) {
     const cssconfig = WEBPACK_CONFIG.find((value) => {
       return value.name === 'css';
@@ -124,13 +124,13 @@ function checkDependencyAddedInMDCPackage() {
 
 function checkPkgDependencyAddedInMDCPackage() {
   assert.notEqual(typeof MASTER_PKG.dependencies[pkg.name], 'undefined',
-    'FAILURE: Component ' + pkg.name + ' is not a denpendency for MDC-web. ' +
+    'FAILURE: Component ' + pkg.name + ' is not a denpendency for MDC Web. ' +
     'Please add ' + pkg.name +' to ' + MASTER_PKG_PATH + '\' dependencies before commit.');
 }
 
 function checkCSSDependencyAddedInMDCPackage() {
-  const name = pkg.name.split('/')[1];
-  const nameMDC = pkg.name.replace('@material/', 'mdc-');
+  const name = getPkgName();
+  const nameMDC = `mdc-${name}`;
   if (CSS_WHITELIST.indexOf(name) === -1) {
     const src = fs.readFileSync(path.join(process.env.PWD, MASTER_CSS_PATH), 'utf8');
     const cssRules = cssom.parse(src).cssRules;
@@ -139,15 +139,15 @@ function checkCSSDependencyAddedInMDCPackage() {
     assert.notEqual(typeof cssRules.find((value) => {
       return value.href === cssRule;
     }), 'undefined',
-    'FAILURE: Component ' + pkg.name + ' is not being imported in MDC-web. ' +
+    'FAILURE: Component ' + pkg.name + ' is not being imported in MDC Web. ' +
     'Please add ' + name + ' to ' + MASTER_CSS_PATH + ' import rule before commit.');
   }
 }
 
 function checkJSDependencyAddedInMDCPackage() {
   const NOT_IMPORTED = ['animation'];
-  const NOT_AUTOINIT = ['auto-init', 'base'];
-  const name = pkg.name.split('/')[1];
+  const NOT_AUTOINIT = ['auto-init', 'base', 'selection-control'];
+  const name = getPkgName();
   if (typeof(pkg.main) !== 'undefined' && NOT_IMPORTED.indexOf(name) === -1) {
     const nameCamel = camelCase(pkg.name.replace('@material/', ''));
     const src = fs.readFileSync(path.join(process.env.PWD, MASTER_JS_PATH), 'utf8');
@@ -157,14 +157,14 @@ function checkJSDependencyAddedInMDCPackage() {
       },
     });
     assert(checkComponentImportedAddedInMDCPackage(ast), 'FAILURE: Component ' +
-      pkg.name + ' is not being imported in MDC-web. ' + 'Please add ' + nameCamel +
+      pkg.name + ' is not being imported in MDC Web. ' + 'Please add ' + nameCamel +
       ' to '+ MASTER_JS_PATH + ' import rule before commit.');
     assert(checkComponentExportedAddedInMDCPackage(ast), 'FAILURE: Component ' +
-      pkg.name + ' is not being exported in MDC-web. ' + 'Please add ' + nameCamel +
+      pkg.name + ' is not being exported in MDC Web. ' + 'Please add ' + nameCamel +
       ' to '+ MASTER_JS_PATH + ' export before commit.');
     if (NOT_AUTOINIT.indexOf(name) === -1) {
       assert(checkAutoInitAddedInMDCPackage(ast) > 0, 'FAILURE: Component ' +
-        pkg.name + ' seems not being auto inited in MDC-web. ' + 'Please add ' +
+        pkg.name + ' seems not being auto inited in MDC Web. ' + 'Please add ' +
         nameCamel + ' to '+ MASTER_JS_PATH + ' autoInit statement before commit.');
     }
   }
@@ -186,7 +186,10 @@ function checkComponentImportedAddedInMDCPackage(ast) {
 }
 
 function checkAutoInitAddedInMDCPackage(ast) {
-  const nameCamel = camelCase(pkg.name.replace('@material/', ''));
+  let nameCamel = camelCase(pkg.name.replace('@material/', ''));
+  if (nameCamel === 'textfield') {
+    nameCamel = 'textField';
+  }
   let autoInitedCount = 0;
   traverse(ast, {
     'ExpressionStatement'({node}) {
@@ -206,7 +209,10 @@ function checkAutoInitAddedInMDCPackage(ast) {
 }
 
 function checkComponentExportedAddedInMDCPackage(ast) {
-  const nameCamel = camelCase(pkg.name.replace('@material/', ''));
+  let nameCamel = camelCase(pkg.name.replace('@material/', ''));
+  if (nameCamel === 'textfield') {
+    nameCamel = 'textField';
+  }
   let isExported = false;
   traverse(ast, {
     'ExportNamedDeclaration'({node}) {
@@ -220,4 +226,14 @@ function checkComponentExportedAddedInMDCPackage(ast) {
     },
   });
   return isExported;
+}
+
+function getPkgName() {
+  let name = pkg.name.split('/')[1];
+  if (name === 'textfield') {
+    // Text-field now has a dash in the name. The package cannot be changed,
+    // since it is a lot of effort to rename npm package
+    name = 'text-field';
+  }
+  return name;
 }

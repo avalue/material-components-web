@@ -48,6 +48,8 @@ export default class MDCSnackbarFoundation extends MDCFoundation {
       deregisterActionClickHandler: (/* handler: EventListener */) => {},
       registerTransitionEndHandler: (/* handler: EventListener */) => {},
       deregisterTransitionEndHandler: (/* handler: EventListener */) => {},
+      notifyShow: () => {},
+      notifyHide: () => {},
     };
   }
 
@@ -119,6 +121,20 @@ export default class MDCSnackbarFoundation extends MDCFoundation {
   }
 
   show(data) {
+    if (!data) {
+      throw new Error(
+        'Please provide a data object with at least a message to display.');
+    }
+    if (!data.message) {
+      throw new Error('Please provide a message to be displayed.');
+    }
+    if (data.actionHandler && !data.actionText) {
+      throw new Error('Please provide action text with the handler.');
+    }
+    if (this.active) {
+      this.queue_.push(data);
+      return;
+    }
     clearTimeout(this.timeoutId_);
     this.snackbarData_ = data;
     this.firstFocus_ = true;
@@ -127,20 +143,6 @@ export default class MDCSnackbarFoundation extends MDCFoundation {
     ['touchstart', 'mousedown', 'focus'].forEach((evtType) => {
       this.adapter_.registerCapturedInteractionHandler(evtType, this.interactionHandler_);
     });
-
-    if (!this.snackbarData_) {
-      throw new Error(
-        'Please provide a data object with at least a message to display.');
-    }
-    if (!this.snackbarData_.message) {
-      throw new Error('Please provide a message to be displayed.');
-    }
-    if (this.snackbarData_.actionHandler && !this.snackbarData_.actionText) {
-      throw new Error('Please provide action text with the handler.');
-    }
-    if (this.active) {
-      this.queue_.push(this.snackbarData_);
-    }
 
     const {ACTIVE, MULTILINE, ACTION_ON_BOTTOM} = cssClasses;
 
@@ -166,6 +168,7 @@ export default class MDCSnackbarFoundation extends MDCFoundation {
     this.active_ = true;
     this.adapter_.addClass(ACTIVE);
     this.adapter_.unsetAriaHidden();
+    this.adapter_.notifyShow();
 
     this.timeoutId_ = setTimeout(this.cleanup_.bind(this), this.snackbarData_.timeout || numbers.MESSAGE_TIMEOUT);
   }
@@ -218,6 +221,7 @@ export default class MDCSnackbarFoundation extends MDCFoundation {
         this.adapter_.setAriaHidden();
         this.active_ = false;
         this.snackbarHasFocus_ = false;
+        this.adapter_.notifyHide();
         this.showNext_();
       };
 

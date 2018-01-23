@@ -14,28 +14,45 @@
 // limitations under the License.
 //
 
+@import "@material/theme/variables"; // for mdc-theme-accessible-ink-color
 @import "./variables";
 
-/**
- * Applies styles to the different types of icons that can exist in toolbars.
- * Both .mdc-toolbar__icon and .mdc-toolbar__icon--menu share all styles except for
- * horizontal padding.
- */
-@mixin mdc-shared-icon-style($padding-type: null) {
+//
+// Public
+//
+
+@mixin mdc-toolbar-ink-color($color) {
+  @include mdc-theme-prop(color, $color);
+}
+
+@mixin mdc-toolbar-fill-color($color) {
+  @include mdc-theme-prop(background-color, $color);
+}
+
+@mixin mdc-toolbar-fill-color-accessible($color) {
+  @include mdc-toolbar-fill-color($color);
+  @include mdc-toolbar-ink-color(mdc-theme-accessible-ink-color($color));
+}
+
+@mixin mdc-toolbar-icon-ink-color($color) {
+  @include mdc-theme-prop(color, $color);
+}
+
+//
+// Private
+//
+
+// Applies styles to the different types of icons that can exist in toolbars.
+// Both .mdc-toolbar__icon and .mdc-toolbar__menu-icon share all styles except for
+// horizontal padding.
+@mixin mdc-toolbar-icon_() {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  // stylelint-disable at-rule-empty-line-before, block-closing-brace-newline-after
-  @if $padding-type == menu {
-    padding: $mdc-toobar-element-vertical-padding;
-  } @else {
-    padding: $mdc-toobar-element-vertical-padding 8px;
-  }
-  // stylelint enable
-
+  padding: $mdc-toolbar-element-vertical-padding;
   border: none;
-  background-color: inherit;
+  background-color: transparent;
   color: inherit;
   text-decoration: none;
+  cursor: pointer;
 }

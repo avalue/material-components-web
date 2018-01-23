@@ -14,24 +14,18 @@
   See the License for the specific language governing permissions and
   limitations under the License
 -->
-<html class="mdc-typography">
+<html>
   <head>
     <meta charset="utf-8">
     <title>Ripple - Material Components Catalog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="/images/logo_components_color_2x_web_48dp.png" />
-    <script src="assets/material-components-web.css.js" charset="utf-8"></script>
-    <script src="assets/demo-styles.css.js" charset="utf-8"></script>
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/logo_components_color_2x_web_48dp.png">
+    <link rel="stylesheet" href="/assets/ripple.css">
+    <script src="/ready.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
-    <script>
-      if (!window.CSS || !window.CSS.supports ||
-        !window.CSS.supports('--css-vars', 'yes') && !(window.CSS.supports('color', '#00000000'))) {
-        document.documentElement.classList.add('unsupported');
-      }
-    </script>
-    <style type="text/css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
       .demo-surface {
         display: flex;
         align-items: center;
@@ -78,6 +72,8 @@
         color: red;
         border-radius: 4px;
         display: none;
+        position: absolute;
+        z-index: 10;
       }
 
       .unsupported #unsupported-msg {
@@ -117,16 +113,16 @@
       }
     </style>
   </head>
-  <body>
+  <body class="mdc-typography">
     <aside id="unsupported-msg">
       It appears your browser does not support custom properties, or has a broken implementation.
-      Please try this in Desktop Chrome or Desktop Firefox.
+      Please try this in Chrome, Firefox, or Safari 10+.
     </aside>
     <header class="mdc-toolbar mdc-toolbar--fixed">
       <div class="mdc-toolbar__row">
         <section class="mdc-toolbar__section mdc-toolbar__section--align-start">
           <span class="catalog-back">
-            <a href="/" class="mdc-toolbar__icon--menu"><i class="material-icons">&#xE5C4;</i></a>
+            <a href="/" class="mdc-toolbar__menu-icon"><i class="material-icons">&#xE5C4;</i></a>
           </span>
           <span class="mdc-toolbar__title catalog-title">Ripple</span>
         </section>
@@ -134,8 +130,8 @@
     </header>
     <main>
       <div class="mdc-toolbar-fixed-adjust"></div>
-      <section class="hero mdc-ripple-surface">
-      </section>
+
+      <section class="hero mdc-ripple-surface"></section>
 
       <section class="example">
         <div>
@@ -177,8 +173,8 @@
           </div>
           <div
             class="mdc-ripple-surface mdc-ripple-surface--accent
-                   mdc-theme--accent demo-surface mdc-elevation--z2" tabindex="0">
-            Accent
+                   mdc-theme--secondary demo-surface mdc-elevation--z2" tabindex="0">
+            Secondary
           </div>
         </div>
         <div>
@@ -190,11 +186,10 @@
           </div>
           <div
             class="mdc-ripple-surface mdc-ripple-surface--accent
-                   mdc-theme--accent demo-surface mdc-elevation--z2" data-demo-no-js tabindex="0">
-            Accent
+                   mdc-theme--secondary demo-surface mdc-elevation--z2" data-demo-no-js tabindex="0">
+            Secondary
           </div>
         </div>
-
       </section>
       <section class="example">
         <div>
@@ -205,16 +200,20 @@
           <h2>Applied to <code>&lt;button&gt;</code> element - CSS Only</h2>
           <button type="button" class="mdc-ripple-surface mdc-elevation--z2 demo-surface" data-demo-no-js>button</button>
         </div>
-
       </section>
     </main>
-    <script src="assets/material-components-web.js" charset="utf-8"></script>
+
+    <script src="/assets/material-components-web.js" async></script>
     <script>
-      (function(global) {
+      demoReady(function() {
+        if (!mdc.ripple.util.supportsCssVariables(window)) {
+          document.documentElement.classList.add('unsupported');
+        }
+
         [].forEach.call(document.querySelectorAll('.mdc-ripple-surface:not([data-demo-no-js])'), function(surface) {
           mdc.ripple.MDCRipple.attachTo(surface);
         });
-      })(this);
+      });
     </script>
   </body>
 </html>

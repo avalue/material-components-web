@@ -48,6 +48,8 @@ echo ''
 
 set +e
 for pkg in $CLOSURIZED_PKGS; do
+  entry_point="goog:mdc.${pkg/mdc-/}"
+  entry_point=${entry_point//-/}
   # Note that the jscomp_error flags turn all default warnings into errors, so that
   # closure exits with a non-zero status if any of them are caught.
   # Also note that we disable accessControls checks due to
@@ -60,7 +62,7 @@ for pkg in $CLOSURIZED_PKGS; do
   --dependency_mode STRICT \
   --module_resolution LEGACY \
   --js_module_root $CLOSURE_PKGDIR \
-  --entry_point $CLOSURE_PKGDIR/$pkg/index \
+  --entry_point $entry_point \
   --checks_only \
   --jscomp_error checkTypes \
   --jscomp_error conformanceViolations \

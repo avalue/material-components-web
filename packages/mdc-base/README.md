@@ -8,9 +8,9 @@ path: /catalog/base/
 
 # Base
 
-MDC Base contains core foundation and component classes that serve as the base classes for all of MDC-Web's foundation classes and components (respectively).
+MDC Base contains core foundation and component classes that serve as the base classes for all of MDC Web's foundation classes and components (respectively).
 
-Most of the time, you shouldn't need to depend on `mdc-base` directly. It is useful however if you'd like to write custom components that follow MDC-Web's pattern and elegantly integrate with the MDC-Web ecosystem.
+Most of the time, you shouldn't need to depend on `mdc-base` directly. It is useful however if you'd like to write custom components that follow MDC Web's pattern and elegantly integrate with the MDC Web ecosystem.
 
 ## Installation
 
@@ -25,7 +25,7 @@ Then include it in your code in one of the following ways:
 #### ES2015+
 
 ```javascript
-import {MDCComponent, MDCFoundation} from 'mdc-base';
+import {MDCComponent, MDCFoundation} from '@material/base';
 ```
 #### CommonJS
 
@@ -52,7 +52,7 @@ const MDCFoundation = mdc.base.MDCFoundation;
 
 ## Usage
 
-mdc-base exposes two classes: `MDCComponent` (the default export) which all components extend from, and `MDCFoundation`, which all foundation classes extend from. To learn more about foundation classes vs. components, check out our [developer guide](https://github.com/material-components/material-components-web/blob/master/docs/DEVELOPER.md) (_WIP_).
+mdc-base exposes two classes: `MDCComponent` (the default export) which all components extend from, and `MDCFoundation`, which all foundation classes extend from. To learn more about foundation classes vs. components, check out our overview on [architecture and best practices](../../docs/code).
 
 ### MDCFoundation
 
@@ -62,7 +62,7 @@ MDCFoundation provides the basic mechanisms for implementing foundation classes.
 - Provide `init()` and `destroy()` lifecycle methods
 
 ```javascript
-import {MDCFoundation} from 'mdc-base';
+import {MDCFoundation} from '@material/base';
 
 export default class MyFoundation extends MDCFoundation {
   static get cssClasses() {

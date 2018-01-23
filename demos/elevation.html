@@ -14,17 +14,16 @@
   See the License for the specific language governing permissions and
   limitations under the License
 -->
-<html class="mdc-typography">
+<html>
   <head>
     <meta charset="utf-8">
     <title>Elevation - Material Components Catalog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="/images/logo_components_color_2x_web_48dp.png" />
-    <script src="assets/material-components-web.css.js" charset="utf-8"></script>
-    <script src="assets/demo-styles.css.js" charset="utf-8"></script>
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/logo_components_color_2x_web_48dp.png">
+    <link rel="stylesheet" href="/assets/elevation.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <style>
       .demo-surfaces {
         padding-top: 48px;
@@ -48,6 +47,14 @@
         background: white;
       }
 
+      .hero .demo-surface {
+        width: 120px;
+        height: 48px;
+        margin: 24px 24px;
+        background-color: #212121;
+        color: #f0f0f0;
+      }
+
       #hover-el {
         display: flex;
         align-items: center;
@@ -55,22 +62,14 @@
         padding: 2rem;
         border-radius: 4px;
       }
-
-      .hero .demo-surface {
-        width: 96px;
-        height: 48px;
-        margin: 24px 24px;
-        background-color: #212121;
-        color: #f0f0f0;
-      }
     </style>
   </head>
-  <body>
+  <body class="mdc-typography">
     <header class="mdc-toolbar mdc-toolbar--fixed">
       <div class="mdc-toolbar__row">
         <section class="mdc-toolbar__section mdc-toolbar__section--align-start">
           <span class="catalog-back">
-            <a href="/" class="mdc-toolbar__icon--menu"><i class="material-icons">&#xE5C4;</i></a>
+            <a href="/" class="mdc-toolbar__menu-icon"><i class="material-icons">&#xE5C4;</i></a>
           </span>
           <span class="mdc-toolbar__title catalog-title">Elevation</span>
         </section>
@@ -82,8 +81,11 @@
         <figure class="demo-surface mdc-elevation--z0">
           <figcaption>FLAT 0dp</figcaption>
         </figure>
-        <figure class="demo-surface mdc-elevation--z4">
-          <figcaption>RAISED 4dp</figcaption>
+        <figure class="demo-surface mdc-elevation--z8">
+          <figcaption>RAISED 8dp</figcaption>
+        </figure>
+        <figure class="demo-surface demo-elevation--custom-color">
+          <figcaption>CUSTOM 16dp</figcaption>
         </figure>
       </section>
 

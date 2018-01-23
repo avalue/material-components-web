@@ -86,6 +86,27 @@ icon-only, and text with icon. An example of each is available on the demo site.
 </nav>
 ```
 
+#### CSS Only Support
+
+In order for the indicator to appear, you will need to change your mark up if you are using CSS Only. Each `.mdc-tab` will have a child element with the class `.mdc-tab__indicator` as shown below:
+
+```html
+<nav id="basic-tab-bar" class="mdc-tab-bar">
+  <a class="mdc-tab mdc-tab--active" href="#one">
+    Home
+    <span class="mdc-tab__indicator"></span>
+  </a>
+  <a class="mdc-tab" href="#two">
+    Merchandise
+    <span class="mdc-tab__indicator"></span>
+  </a>
+  <a class="mdc-tab" href="#three">
+    About Us
+    <span class="mdc-tab__indicator"></span>
+  </a>
+</nav>
+```
+
 #### RTL Support
 
 Tab Bars will reverse the order of their tabs if they are placed within an
@@ -105,7 +126,7 @@ ancestor element with attribute `dir="rtl"`.
 
 #### Dark Mode Support
 
-Like other MDC-Web components, tabs support dark mode either when an
+Like other MDC Web components, tabs support dark mode either when an
 `mdc-tab-bar--theme-dark` class is attached to the root element, or the element has
 an ancestor with class `mdc-theme--dark`.
 
@@ -130,7 +151,7 @@ provides a minimal example of how to do so using JavaScript, also shown below.
 #### Markup:
 ```html
 <section id="dynamic-demo-toolbar">
-  <nav id="dynamic-tab-bar" class="mdc-tab-bar mdc-tab-bar--indicator-accent" role="tablist">
+  <nav id="dynamic-tab-bar" class="mdc-tab-bar" role="tablist">
     <a role="tab" aria-controls="panel-1"
        class="mdc-tab mdc-tab--active" href="#panel-1">Item One</a>
     <a role="tab" aria-controls="panel-2"
@@ -160,7 +181,9 @@ var dynamicTabBar = window.dynamicTabBar = new mdc.tabs.MDCTabBar(document.query
 var dots = document.querySelector('.dots');
 var panels = document.querySelector('.panels');
 
-dynamicTabBar.preventDefaultOnClick = true;
+dynamicTabBar.tabs.forEach(function(tab) {
+  tab.preventDefaultOnClick = true;
+});
 
 function updateDot(index) {
   var activeDot = dots.querySelector('.dot.active');
@@ -208,6 +231,22 @@ dots.addEventListener('click', function (evt) {
   updateDot(dotIndex);
 })
 ```
+
+### Sass Mixins
+
+To customize the ink color of any part of the tab, use the following mixins. We recommend you apply these mixins within CSS selectors like `.foo-tab:not(.mdc-tab--active)` to select your inactive tabs, `foo-tab:hover` to select the hover state of your tabs, and `.foo-tab.mdc-tab--active` to select your active tabs.
+
+#### `mdc-tab-ink-color`
+Use this mixin to set the color of all ink on the tab.
+
+#### `mdc-tab-icon-ink-color`
+This mixin customizes the icon ink color.
+
+#### `mdc-tab-label-ink-color`
+This mixin customizes the label ink color.
+
+#### `mdc-tab-bar-indicator-ink-color`
+This mixin customizes the indicator ink color.
 
 ### Using the CSS-Only Component
 
@@ -383,7 +422,7 @@ from the `mdc-tab-bar` Element inside of the `mdc-tab-bar-scroller` node during 
 of `MDCTabBarScroller`, e.g.:
 
 ```html
-<div id="my-tab-bar-scroller" class="mdc-tab-bar-scroller">
+<div id="my-mdc-tab-bar-scroller" class="mdc-tab-bar-scroller">
   <div class="mdc-tab-bar-scroller__indicator mdc-tab-bar-scroller__indicator--back">
     <a class="mdc-tab-bar-scroller__indicator__inner material-icons" href="#" aria-label="scroll back button">
       navigate_before
@@ -512,6 +551,10 @@ Sets `computedWidth_` and `computedLeft_` for a tab.
 | `activeTab` | `MDCTab` | The currently active tab. Setting this makes the tab active. |
 | `activeTabIndex` | `number` | The index of the currently active tab. Setting this makes the tab at the given index active. |
 
+#### MDCTabBar.layout() => void
+
+Proxies to the foundation's `layout()` method.
+
 ### Tab Bar Events
 
 #### MDCTabBar:change
@@ -636,6 +679,10 @@ Scrolls the tab bar such that the leftmost tab traverses the scroll frame and be
 Scrolls the tab bar such that the rightmost tab traverses the scroll frame and becomes the leftmost tab. This tabs left offset will line up with the left edge of the scroll frame, and never be partially or fully occluded.
 
 > **NOTE:** Due to a quirk in event behavior, we allow the rightmost tab to be partially occluded even when tabbed to because clicking on such an element would shift the frame on the `focus` event. This would result in a scenario where the ripple persists and the intended tab would not be selected due to the tab bar shifting before the `mouseup` or `click` events get dispatched.
+
+#### MDCTabBarScrollerFoundation.scrollToTabAtIndex(index: number) => void
+
+Scrolls the tab bar such that the tab at the index provided traverses the scroll frame and becomes the leftmost tab.
 
 #### MDCTabBarScrollerFoundation.layout() => void
 

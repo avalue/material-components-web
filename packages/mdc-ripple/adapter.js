@@ -1,4 +1,5 @@
 /**
+ * @license
  * Copyright 2016 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,11 +34,11 @@
  * Implement this adapter for your framework of choice to delegate updates to
  * the component in your framework of choice. See architecture documentation
  * for more details.
- * https://github.com/material-components/material-components-web/blob/master/docs/architecture.md
+ * https://github.com/material-components/material-components-web/blob/master/docs/code/architecture.md
  *
  * @record
  */
-export default class MDCRippleAdapter {
+class MDCRippleAdapter {
   /** @return {boolean} */
   browserSupportsCssVars() {}
 
@@ -69,6 +70,18 @@ export default class MDCRippleAdapter {
   deregisterInteractionHandler(evtType, handler) {}
 
   /**
+   * @param {string} evtType
+   * @param {!Function} handler
+   */
+  registerDocumentInteractionHandler(evtType, handler) {}
+
+  /**
+   * @param {string} evtType
+   * @param {!Function} handler
+   */
+  deregisterDocumentInteractionHandler(evtType, handler) {}
+
+  /**
    * @param {!Function} handler
    */
   registerResizeHandler(handler) {}
@@ -90,3 +103,5 @@ export default class MDCRippleAdapter {
   /** @return {{x: number, y: number}} */
   getWindowPageOffset() {}
 }
+
+export default MDCRippleAdapter;

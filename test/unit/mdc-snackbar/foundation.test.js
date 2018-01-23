@@ -50,6 +50,7 @@ test('defaultAdapter returns a complete adapter implementation', () => {
     'deregisterCapturedInteractionHandler', 'registerActionClickHandler',
     'deregisterActionClickHandler', 'registerTransitionEndHandler',
     'deregisterTransitionEndHandler',
+    'notifyShow', 'notifyHide',
   ]);
   // Test default methods
   methods.forEach((m) => assert.doesNotThrow(defaultAdapter[m]));
@@ -244,7 +245,7 @@ test('#show while snackbar is already showing will queue the data object.', () =
   });
 
   td.verify(mockAdapter.setMessageText('Message Deleted'));
-  td.verify(mockAdapter.setMessageText('Message Archived'));
+  td.verify(mockAdapter.setMessageText('Message Archived'), {times: 0});
 });
 
 test('#show while snackbar is already showing will show after the timeout and transition end', () => {
@@ -266,6 +267,8 @@ test('#show while snackbar is already showing will show after the timeout and tr
   foundation.show({
     message: 'Message Archived',
   });
+
+  td.verify(mockAdapter.setMessageText('Message Archived'), {times: 0});
 
   clock.tick(numbers.MESSAGE_TIMEOUT);
   transEndHandler();

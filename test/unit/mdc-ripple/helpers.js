@@ -18,7 +18,6 @@ import td from 'testdouble';
 
 import {setupFoundationTest} from '../helpers/setup';
 import {createMockRaf} from '../helpers/raf';
-import {captureHandlers as baseCaptureHandlers} from '../helpers/foundation';
 import MDCRippleFoundation from '../../../packages/mdc-ripple/foundation';
 
 export function setupTest(isCssVarsSupported = true) {
@@ -43,11 +42,6 @@ export function testFoundation(desc, isCssVarsSupported, runTests) {
   });
 }
 
-export function captureHandlers(adapter) {
-  const handlers = baseCaptureHandlers(adapter, 'registerInteractionHandler');
-  return handlers;
-}
-
 // Creates a mock window object with all members necessary to test util.supportsCssVariables
 // in cases where window.CSS.supports indicates the feature is supported.
 export function createMockWindowForCssVariables() {
@@ -58,12 +52,6 @@ export function createMockWindowForCssVariables() {
       appendChild: () => mockWindow.appendedNodes++,
     },
     createElement: td.func('document.createElement'),
-    head: {
-      appendChild: () => mockWindow.appendedNodes++,
-    },
-  };
-  const mockSheet = {
-    insertRule: () => {},
   };
 
   td.when(getComputedStyle(td.matchers.anything())).thenReturn({
@@ -72,11 +60,6 @@ export function createMockWindowForCssVariables() {
 
   td.when(mockDoc.createElement('div')).thenReturn({
     remove: remove,
-  });
-
-  td.when(mockDoc.createElement('style')).thenReturn({
-    remove: remove,
-    sheet: mockSheet,
   });
 
   const mockWindow = {

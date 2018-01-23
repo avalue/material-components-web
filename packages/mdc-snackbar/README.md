@@ -48,7 +48,7 @@ npm install --save @material/snackbar
      aria-hidden="true">
   <div class="mdc-snackbar__text"></div>
   <div class="mdc-snackbar__action-wrapper">
-    <button type="button" class="mdc-button mdc-snackbar__action-button"></button>
+    <button type="button" class="mdc-snackbar__action-button"></button>
   </div>
 </div>
 ```
@@ -65,7 +65,7 @@ snackbar, add the `mdc-snackbar--align-start` modifier class to the root element
      aria-hidden="true">
   <div class="mdc-snackbar__text"></div>
   <div class="mdc-snackbar__action-wrapper">
-    <button type="button" class="mdc-button mdc-snackbar__action-button"></button>
+    <button type="button" class="mdc-snackbar__action-button"></button>
   </div>
 </div>
 ```
@@ -80,7 +80,7 @@ messages with optional action.
 ##### ES2015
 
 ```javascript
-import {MDCSnackbar, MDCSnackbarFoundation} from 'mdc-snackbar';
+import {MDCSnackbar, MDCSnackbarFoundation} from '@material/snackbar';
 ```
 
 ##### CommonJS
@@ -121,10 +121,15 @@ mdc.snackbar.MDCSnackbar.attachTo(document.querySelector('.mdc-snackbar'));
 Snackbars can easily be initialized using their default constructors as well, similar to `attachTo`.
 
 ```javascript
-import {MDCSnackbar} from 'mdc-snackbar';
+import {MDCSnackbar} from '@material/snackbar';
 
 const snackbar = new MDCSnackbar(document.querySelector('.mdc-snackbar'));
 ```
+
+#### Handling events
+
+When snackbar is shown or dismissed, the component will emit a `MDCSnackbar:show` or 
+`MDCSnackbar:hide` custom event with no data attached.
 
 ### Showing a message and action
 
@@ -153,13 +158,13 @@ To respond to a snackbar action, assign a function to the optional `actionHandle
      aria-hidden="true">
   <div class="mdc-snackbar__text"></div>
   <div class="mdc-snackbar__action-wrapper">
-    <button type="button" class="mdc-button mdc-snackbar__action-button"></button>
+    <button type="button" class="mdc-snackbar__action-button"></button>
   </div>
 </div>
 ```
 
 ```js
-import {MDCSnackbar} from 'mdc-snackbar';
+import {MDCSnackbar} from '@material/snackbar';
 
 const snackbar = new MDCSnackbar(document.querySelector('.mdc-snackbar'));
 const dataObj = {
@@ -214,6 +219,8 @@ The adapter for snackbars must provide the following functions, with correct sig
 | `deregisterActionClickHandler(handler: EventListener) => void` | Deregisters an event handler from a `click` event on the action element. This will only be called with handlers that have previously been passed to `registerActionClickHandler` calls. |
 | `registerTransitionEndHandler(handler: EventListener) => void` | Registers an event handler to be called when an `transitionend` event is triggered on the root element. Note that you must account for vendor prefixes in order for this to work correctly. |
 | `deregisterTransitionEndHandler(handler: EventListener) => void` | Deregisters an event handler from an `transitionend` event listener. This will only be called with handlers that have previously been passed to `registerTransitionEndHandler` calls. |
+| `notifyShow() => void` | Dispatches an event notifying listeners that the snackbar has been shown. |
+| `notifyHide() => void` | Dispatches an event notifying listeners that the snackbar has been hidden. |
 
 ## Avoiding Flash-Of-Unstyled-Content (FOUC)
 

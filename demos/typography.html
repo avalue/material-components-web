@@ -19,12 +19,11 @@
     <meta charset="utf-8">
     <title>Typography - Material Components Catalog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="/images/logo_components_color_2x_web_48dp.png" />
-    <script src="assets/material-components-web.css.js" charset="utf-8"></script>
-    <script src="assets/demo-styles.css.js" charset="utf-8"></script>
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/logo_components_color_2x_web_48dp.png">
+    <link rel="stylesheet" href="/assets/typography.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <style>
       .demo-typography--section {
         margin: 24px;
@@ -33,12 +32,12 @@
       }
     </style>
   </head>
-  <body>
+  <body class="mdc-typography">
     <header class="mdc-toolbar mdc-toolbar--fixed">
       <div class="mdc-toolbar__row">
         <section class="mdc-toolbar__section mdc-toolbar__section--align-start">
           <span class="catalog-back">
-            <a href="/" class="mdc-toolbar__icon--menu"><i class="material-icons">&#xE5C4;</i></a>
+            <a href="/" class="mdc-toolbar__menu-icon"><i class="material-icons">&#xE5C4;</i></a>
           </span>
           <span class="mdc-toolbar__title catalog-title">Typography</span>
         </section>
@@ -50,7 +49,7 @@
         <h2 class="mdc-typography--display4">Tt</h2>
       </section>
 
-      <section class="demo-typography--section mdc-typography">
+      <section class="demo-typography--section">
         <h2 class="mdc-typography--display1">Styles</h2>
         <h1 class="mdc-typography--display4">Display 4</h1>
         <h1 class="mdc-typography--display3">Display 3</h1>
@@ -69,7 +68,7 @@
         <aside class="mdc-typography--body2">Body 2 text, calling something out.</aside>
       </section>
 
-      <section class="demo-typography--section mdc-typography">
+      <section class="demo-typography--section">
         <h2 class="mdc-typography--display1">Styles with margin adjustments</h2>
         <h1 class="mdc-typography--display4 mdc-typography--adjust-margin">Display 4</h1>
         <h1 class="mdc-typography--display3 mdc-typography--adjust-margin">Display 3</h1>
